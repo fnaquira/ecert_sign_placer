@@ -19,7 +19,8 @@ $(document).ready(function () {
 		$previewContainer.find(".tab-content").remove();
 		$previewContainer.find(".tab-list").append("<span>Cargando...</span>");
 		$.ajax({
-			url: "http://localhost:3000/convertir",
+			//url: "http://localhost:3000/convertir",
+			url: "https://ecert.resit.cl:3000/convertir",
 			type: "POST",
 			data: formData,
 			processData: false,
@@ -31,15 +32,14 @@ $(document).ready(function () {
 					$previewContainer
 						.find(".tab-list")
 						.append('<a class="tab" href="#tab-' + contador + '">Página ' + contador + "</a>");
-					$previewContainer
-						.find(".tabs")
-						.append(
-							'<div id="tab-' +
-								contador +
-								'" class="tab-content"><img src="http://localhost:3000/imagenes/' +
-								filename +
-								'" class="img-page"/></div>'
-						);
+					$previewContainer.find(".tabs").append(
+						'<div id="tab-' +
+							contador +
+							//'" class="tab-content"><img src="http://localhost:3000/imagenes/' +
+							'" class="tab-content"><img src="https://ecert.resit.cl:3000/imagenes/' +
+							filename +
+							'" class="img-page"/></div>'
+					);
 					contador++;
 				});
 				$previewContainer.find(".tab:first").addClass("active");
@@ -61,6 +61,11 @@ $.fn.drags = function (opt) {
 		var $el = this.find(opt.handle);
 	}
 
+	var firstPosition = {
+		pos_y: $el.offset().top,
+		pos_x: $el.offset().left,
+	};
+
 	return $el
 		.css("cursor", opt.cursor)
 		.on("mousedown", function (e) {
@@ -69,6 +74,10 @@ $.fn.drags = function (opt) {
 			} else {
 				var $drag = $(this).addClass("active-handle").parent().addClass("draggable");
 			}
+			firstPosition = {
+				pos_y: $drag.offset().top,
+				pos_x: $drag.offset().left,
+			};
 			var z_idx = $drag.css("z-index"),
 				drg_h = $drag.outerHeight(),
 				drg_w = $drag.outerWidth(),
@@ -78,14 +87,49 @@ $.fn.drags = function (opt) {
 				.css("z-index", 1000)
 				.parents()
 				.on("mousemove", function (e) {
+					//contenedor
+					var $contenedor = $drag.closest('.contenedor');
+					var contTop = $contenedor.offset().top;
+					var contLeft = $contenedor.offset().left;
+					function functionValidate (e) {
+						$(this).removeClass("draggable").css("z-index", z_idx);
+						var tmpTop = e.pageY + pos_y - drg_h;
+						var tmpLeft = e.pageX + pos_x - drg_w;
+						var outside = false;
+						if(tmpTop < contTop){
+							outside = true;
+						}
+						if(tmpTop+drg_h > contTop+$contenedor.outerHeight()){
+							outside = true;
+						}
+						if(tmpLeft < contLeft){
+							outside = true;
+						}
+						if(tmpLeft+drg_w > contLeft+$contenedor.outerWidth()){
+							console.log({tmpLeft,drg_w,contLeft,conte:$contenedor.outerWidth()})
+							outside = true;
+						}
+						if(outside==true){
+							$(this).offset({
+								top: firstPosition.pos_y,
+								left: firstPosition.pos_x,
+							});
+							$(this).off('mouseup', functionValidate);
+						}else{
+							var drg_h = $(this).outerHeight();
+							var drg_w = $(this).outerWidth();
+							console.log({
+								pos_y: $(this).offset().top + drg_h - e.pageY,
+								pos_x: $(this).offset().left + drg_w - e.pageX,
+							});
+						}
+					}
 					$(".draggable")
 						.offset({
 							top: e.pageY + pos_y - drg_h,
 							left: e.pageX + pos_x - drg_w,
 						})
-						.on("mouseup", function () {
-							$(this).removeClass("draggable").css("z-index", z_idx);
-						});
+						.on("mouseup", functionValidate);
 				});
 			e.preventDefault(); // disable selection
 		})
@@ -95,11 +139,5 @@ $.fn.drags = function (opt) {
 			} else {
 				$(this).removeClass("active-handle").parent().removeClass("draggable");
 			}
-			var drg_h = $(this).outerHeight();
-			var drg_w = $(this).outerWidth();
-			console.log({
-				pos_y: $(this).offset().top + drg_h - e.pageY,
-				pos_x: $(this).offset().left + drg_w - e.pageX,
-			});
 		});
 };
