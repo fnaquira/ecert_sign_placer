@@ -1,35 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Subida de PDF y firma</title>
-	<link media="all" href="style.css" rel="stylesheet" />
-	<script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
-</head>
-<body>
-	<main>
-		<h3>Test de subida pdf</h3>
-		<div>
-			<h5>subida de pdf</h5>
-			<form id="pdf-form" action="/convertir" method="post" enctype="multipart/form-data">
-				<input type="file" name="pdf" accept="application/pdf">
-				<br><br>
-				<input type="submit" value="Convertir a imágenes">
-			  </form>
-		</div>
-		<div>
-			<div id="preview">
-				<div class="tabs">
-					<nav class="tab-list"></nav>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Subida de PDF y firma</title>
+		<link media="all" href="style.css" rel="stylesheet" />
+		<script
+			src="https://code.jquery.com/jquery-3.6.3.min.js"
+			integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
+			crossorigin="anonymous"
+		></script>
+	</head>
+	<body>
+		<main>
+			<h3>Test de subida pdf</h3>
+			<div>
+				<h5>subida de pdf</h5>
+				<form id="pdf-form" action="/convertir" method="post" enctype="multipart/form-data">
+					<input type="file" name="pdf" accept="application/pdf" />
+					<br /><br />
+					<input type="submit" value="Convertir a imágenes" />
+				</form>
+			</div>
+			<div>
+				<div id="preview">
+					<div class="tabs">
+						<nav class="tab-list"></nav>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="contenedor">
-			<div class="firma"></div>
-		</div>
-	</main>
-	<script type="text/javascript" src="main.js"></script>
-</body>
+			<div class="contenedor">
+				<div class="firma"></div>
+			</div>
+		</main>
+		<script type="text/javascript" src="main.js"></script>
+	</body>
 </html>
