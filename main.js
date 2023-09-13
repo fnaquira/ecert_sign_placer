@@ -1,3 +1,5 @@
+var responseImgs = {};
+
 $(document).ready(function () {
 	$('.firma').drags();
 
@@ -15,35 +17,26 @@ $(document).ready(function () {
 		e.preventDefault();
 		var formData = new FormData(this);
 		var $previewContainer = $('#preview');
+		responseImgs = {};
 		$previewContainer.find('.tab-list').empty();
+		var $fileList = $('.filesUploaded').empty();
 		$previewContainer.find('.tab-content').remove();
 		$previewContainer.find('.tab-list').append('<span>Cargando...</span>');
 		$.ajax({
-			//url: "http://localhost:3000/convertir",
-			url: 'https://ecert.resit.cl:3000/convertir',
+			url: 'http://localhost:3000/convertirlos',
+			//url: 'https://ecert.resit.cl:3000/convertirlos',
+			//url: 'https://pdf.favionaquira.dev/convertirlos',
 			type: 'POST',
 			data: formData,
 			processData: false,
 			contentType: false,
 			success: function (response) {
-				$previewContainer.find('.tab-list').empty();
-				var contador = 1;
-				response.images.forEach((filename) => {
-					$previewContainer
-						.find('.tab-list')
-						.append('<a class="tab" href="#tab-' + contador + '">Página ' + contador + '</a>');
-					$previewContainer.find('.tabs').append(
-						'<div id="tab-' +
-							contador +
-							//'" class="tab-content"><img src="http://localhost:3000/imagenes/' +
-							'" class="tab-content"><img src="https://ecert.resit.cl:3000/imagenes/' +
-							filename +
-							'" class="img-page"/></div>'
-					);
-					contador++;
+				responseImgs = response;
+				$('.filesUploaded').empty();
+				response.forEach((fileItem, i) => {
+					$fileList.append('<li><a href="javascript:loadImgs(' + i + ');">' + fileItem.name + '</a></li>');
 				});
-				$previewContainer.find('.tab:first').addClass('active');
-				$previewContainer.find('.tab-content:first').addClass('show');
+				loadImgs(0);
 			},
 			error: function (error) {
 				console.error(error);
@@ -51,6 +44,30 @@ $(document).ready(function () {
 		});
 	});
 });
+
+function loadImgs(i) {
+	var $previewContainer = $('#preview');
+	$previewContainer.find('.tab-list').empty();
+	$previewContainer.find('.tab-content').remove();
+	var contador = 1;
+	responseImgs[i].imgs.forEach((filename) => {
+		console.log(filename);
+		$previewContainer
+			.find('.tab-list')
+			.append('<a class="tab" href="#tab-' + contador + '">Página ' + contador + '</a>');
+		$previewContainer.find('.tabs').append(
+			'<div id="tab-' +
+				contador +
+				'" class="tab-content"><img src="http://localhost:3000/imagenes/' +
+				//'" class="tab-content"><img src="https://pdf.favionaquira.dev/imagenes/' +
+				filename +
+				'" class="img-page"/></div>'
+		);
+		contador++;
+	});
+	$previewContainer.find('.tab:first').addClass('active');
+	$previewContainer.find('.tab-content:first').addClass('show');
+}
 
 $.fn.drags = function (opt) {
 	opt = $.extend({ handle: '', cursor: 'move' }, opt);

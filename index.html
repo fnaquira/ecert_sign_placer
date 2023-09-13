@@ -18,10 +18,13 @@
 			<div>
 				<h5>subida de pdf</h5>
 				<form id="pdf-form" action="/convertir" method="post" enctype="multipart/form-data">
-					<input type="file" name="pdf" accept="application/pdf" />
+					<input type="file" name="pdfs" accept="application/pdf" multiple />
 					<br /><br />
 					<input type="submit" value="Convertir a imágenes" />
 				</form>
+			</div>
+			<div>
+				<ul class="filesUploaded"></ul>
 			</div>
 			<div>
 				<div id="preview">
