@@ -23,9 +23,9 @@ $(document).ready(function () {
 		$previewContainer.find('.tab-content').remove();
 		$previewContainer.find('.tab-list').append('<span>Cargando...</span>');
 		$.ajax({
-			url: 'http://localhost:3000/convertirlos',
+			//url: 'http://localhost:3000/convertirlos',
 			//url: 'https://ecert.resit.cl:3000/convertirlos',
-			//url: 'https://pdf.favionaquira.dev/convertirlos',
+			url: 'https://pdf.favionaquira.dev/convertirlos',
 			type: 'POST',
 			data: formData,
 			processData: false,
@@ -34,7 +34,15 @@ $(document).ready(function () {
 				responseImgs = response;
 				$('.filesUploaded').empty();
 				response.forEach((fileItem, i) => {
-					$fileList.append('<li><a href="javascript:loadImgs(' + i + ');">' + fileItem.name + '</a></li>');
+					$fileList.append(
+						'<li><a href="javascript:loadImgs(' +
+							i +
+							');">' +
+							fileItem.name +
+							'</a> - <a href="javascript:removeFile(' +
+							i +
+							')">Eliminar</a></li>'
+					);
 				});
 				loadImgs(0);
 			},
@@ -44,6 +52,45 @@ $(document).ready(function () {
 		});
 	});
 });
+
+function removeFile(i) {
+	var $previewContainer = $('#preview');
+	$previewContainer.find('.tab-list').empty();
+	$previewContainer.find('.tab-content').remove();
+	responseImgs.splice(i, 1);
+	var $fileList = $('.filesUploaded').empty();
+	responseImgs.forEach((fileItem, i) => {
+		$fileList.append(
+			'<li><a href="javascript:loadImgs(' +
+				i +
+				');">' +
+				fileItem.name +
+				'</a> - <a href="javascript:removeFile(' +
+				i +
+				')">Eliminar</a></li>'
+		);
+	});
+
+	const form = document.getElementById('pdf-form');
+	const fileInput = form.querySelector('input[name="pdfs"]');
+	const files = Array.from(fileInput.files); // Convert FileList to an array
+	const indexToRemove = i; // Replace with the index of the file you want to remove
+
+	if (indexToRemove >= 0 && indexToRemove < files.length) {
+		files.splice(indexToRemove, 1); // Remove the file at the specified index
+
+		// Create a new FileList with the modified array of files
+		const newFileList = new DataTransfer();
+		files.forEach((file) => newFileList.items.add(file));
+
+		// Update the file input with the new FileList
+		fileInput.files = newFileList.files;
+	}
+	const filesNew = Array.from(fileInput.files); // Convert FileList to an array
+	if (filesNew.length == 0) return console.log('no hay archivos');
+
+	loadImgs(0);
+}
 
 function loadImgs(i) {
 	var $previewContainer = $('#preview');
@@ -58,8 +105,8 @@ function loadImgs(i) {
 		$previewContainer.find('.tabs').append(
 			'<div id="tab-' +
 				contador +
-				'" class="tab-content"><img src="http://localhost:3000/imagenes/' +
-				//'" class="tab-content"><img src="https://pdf.favionaquira.dev/imagenes/' +
+				//'" class="tab-content"><img src="http://localhost:3000/imagenes/' +
+				'" class="tab-content"><img src="https://pdf.favionaquira.dev/imagenes/' +
 				filename +
 				'" class="img-page"/></div>'
 		);
