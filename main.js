@@ -1,4 +1,7 @@
 var responseImgs = {};
+var fileCoords = {}; // object to store file coordinates
+var selectedFile = 0;
+var selectedPage = 1;
 
 $(document).ready(function () {
 	$('.firma').drags();
@@ -6,11 +9,18 @@ $(document).ready(function () {
 	$('.tab-list').on('click', '.tab', function (event) {
 		event.preventDefault();
 
+		selectedPage = $(this).data('cont');
+
 		$('.tab').removeClass('active');
 		$('.tab-content').removeClass('show');
 
 		$(this).addClass('active');
 		$($(this).attr('href')).addClass('show');
+	});
+
+	$('#btnFirma').click(function (e) {
+		e.preventDefault();
+		console.log({ fileCoords });
 	});
 
 	$('#pdf-form').submit(function (e) {
@@ -93,15 +103,29 @@ function removeFile(i) {
 }
 
 function loadImgs(i) {
+	if (fileCoords[i]) {
+		$('.firma').offset({
+			top: $('.contenedor').offset().top + fileCoords[i].y,
+			left: $('.contenedor').offset().left + fileCoords[i].x
+		});
+	} else {
+		$('.firma').offset({
+			top: $('.contenedor').offset().top,
+			left: $('.contenedor').offset().left
+		});
+	}
+	selectedFile = i;
+	selectedPage = 1;
 	var $previewContainer = $('#preview');
 	$previewContainer.find('.tab-list').empty();
 	$previewContainer.find('.tab-content').remove();
 	var contador = 1;
 	responseImgs[i].imgs.forEach((filename) => {
-		console.log(filename);
 		$previewContainer
 			.find('.tab-list')
-			.append('<a class="tab" href="#tab-' + contador + '">Página ' + contador + '</a>');
+			.append(
+				'<a class="tab" href="#tab-' + contador + '" data-cont="' + contador + '">Página ' + contador + '</a>'
+			);
 		$previewContainer.find('.tabs').append(
 			'<div id="tab-' +
 				contador +
@@ -201,11 +225,14 @@ $.fn.drags = function (opt) {
 			}
 			var drg_h = $(this).outerHeight();
 			var drg_w = $(this).outerWidth();
-			console.log({
+			var coordinates = {
 				pos_y: $(this).offset().top + drg_h - e.pageY,
 				pos_x: $(this).offset().left + drg_w - e.pageX,
 				new_x: $(this).offset().left - $(this).closest('.contenedor').offset().left,
 				new_y: $(this).offset().top - $(this).closest('.contenedor').offset().top
-			});
+			};
+			if (coordinates.new_x > 0 && coordinates.new_y > 0)
+				fileCoords[selectedFile] = { x: coordinates.new_x, y: coordinates.new_y, page: selectedPage };
+			console.log(coordinates);
 		});
 };
