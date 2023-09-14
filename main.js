@@ -232,7 +232,12 @@ $.fn.drags = function (opt) {
 				new_y: $(this).offset().top - $(this).closest('.contenedor').offset().top
 			};
 			if (coordinates.new_x > 0 && coordinates.new_y > 0)
-				fileCoords[selectedFile] = { x: coordinates.new_x, y: coordinates.new_y, page: selectedPage };
+				fileCoords[selectedFile] = {
+					x: coordinates.new_x,
+					y: coordinates.new_y,
+					page: selectedPage,
+					name: responseImgs[selectedFile].name
+				};
 			console.log(coordinates);
 		});
 };
