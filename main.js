@@ -35,7 +35,7 @@ $(document).ready(function () {
 		$.ajax({
 			//url: 'http://localhost:3000/convertirlos',
 			//url: 'https://ecert.resit.cl:3000/convertirlos',
-			url: 'https://pdf.favionaquira.dev/convertirlos',
+			url: 'https://ecert.ecertla.com/apipdf/convertirlos',
 			type: 'POST',
 			data: formData,
 			processData: false,
@@ -130,7 +130,7 @@ function loadImgs(i) {
 			'<div id="tab-' +
 				contador +
 				//'" class="tab-content"><img src="http://localhost:3000/imagenes/' +
-				'" class="tab-content"><img src="https://pdf.favionaquira.dev/imagenes/' +
+				'" class="tab-content"><img src="https://ecert.ecertla.com/apipdf/imagenes/' +
 				filename +
 				'" class="img-page"/></div>'
 		);
